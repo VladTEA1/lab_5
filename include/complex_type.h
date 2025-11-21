@@ -5,21 +5,33 @@
 #include <iostream>
 
 struct ComplexType {
-    int id;
-    std::string name;
-    double value;
+    int identifier;
+    std::string title;
+    double data_value;
     
-    ComplexType(int i = 0, const std::string& n = "", double v = 0.0) 
-        : id(i), name(n), value(v) {}
+    ComplexType(int id_val = 0, const std::string& text = "", double num = 0.0) 
+        : identifier(id_val), title(text), data_value(num) {}
     
-    bool operator==(const ComplexType& other) const {
-        return id == other.id && name == other.name && value == other.value;
+    bool isEqual(const ComplexType& other) const {
+        return identifier == other.identifier && 
+               title == other.title && 
+               data_value == other.data_value;
     }
     
-    friend std::ostream& operator<<(std::ostream& os, const ComplexType& ct) {
-        os << "ComplexType{id=" << ct.id << ", name=\"" << ct.name << "\", value=" << ct.value << "}";
-        return os;
+    void print(std::ostream& output) const {
+        output << "ComplexType{id=" << identifier 
+               << ", name=\"" << title 
+               << "\", value=" << data_value << "}";
     }
 };
+
+inline std::ostream& operator<<(std::ostream& output, const ComplexType& obj) {
+    obj.print(output);
+    return output;
+}
+
+inline bool operator==(const ComplexType& first, const ComplexType& second) {
+    return first.isEqual(second);
+}
 
 #endif
