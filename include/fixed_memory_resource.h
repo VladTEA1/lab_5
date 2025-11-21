@@ -8,28 +8,28 @@
 
 class fixed_memory_resource : public std::pmr::memory_resource {
 private:
-    void* memory_pool;
-    size_t pool_size;
-    size_t used_memory;
-    std::list<std::pair<void*, size_t>> allocated_blocks;
+    void* storage_area;
+    std::size_t total_capacity;
+    std::size_t current_usage;
+    std::list<std::pair<void*, std::size_t>> active_allocations;
     
-    struct free_block {
-        void* ptr;
-        size_t size;
+    struct available_region {
+        void* start_position;
+        std::size_t region_size;
     };
-    std::list<free_block> free_blocks;
+    std::list<available_region> available_regions;
 
 public:
-    fixed_memory_resource(size_t size);
+    explicit fixed_memory_resource(std::size_t capacity);
     ~fixed_memory_resource() override;
 
     fixed_memory_resource(const fixed_memory_resource&) = delete;
     fixed_memory_resource& operator=(const fixed_memory_resource&) = delete;
 
 protected:
-    void* do_allocate(size_t bytes, size_t alignment) override;
-    void do_deallocate(void* p, size_t bytes, size_t alignment) override;
-    bool do_is_equal(const std::pmr::memory_resource& other) const noexcept override;
+    void* do_allocate(std::size_t requested_size, std::size_t alignment_requirement) override;
+    void do_deallocate(void* target_address, std::size_t block_size, std::size_t alignment_requirement) override;
+    bool do_is_equal(const std::pmr::memory_resource& other_instance) const noexcept override;
 };
 
 #endif
